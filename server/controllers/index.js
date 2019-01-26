@@ -3,15 +3,15 @@ var models = require('../models');
 module.exports = {
   messages: {
     get: function (req, res) {
-      models.messages.get((err, results) => {
-        if (err) throw err;
-        console.log(results);
-        res.send(results);
-      });
+      models.messages.get()
+        .then(messages => {
+          res.send(messages);
+        })
+        .catch(err => {
+          res.send(err);
+        });
     }, // a function which handles a get request for all messages
     post: function (req, res) {
-      console.log('req body is', req.body);
-      //var result = models.messages.post(req.body);
       models.messages.getIdFromTable('Users', 'username', req.body.username)
         .then((u_id) => {
           models.messages.getIdFromTable('Rooms', 'roomname', req.body.roomname)
@@ -24,7 +24,7 @@ module.exports = {
               return models.messages.post(message);
             })
             .then((results) => {
-              response.send(results);
+              res.send(results);
             })
             .catch((err) => {
               throw(err);
@@ -38,16 +38,44 @@ module.exports = {
 
   users: {
     // Ditto as above
-    get: function (req, res) {},
+    get: function (req, res) {
+      models.users.get()
+        .then(users => {
+          res.send(users);
+        })
+        .catch(err => {
+          res.send(err);
+        });
+    },
     post: function (req, res) {
-      console.log('got here');
       models.users.post(req.body.username)
         .then(results => {
           res.send(results);
         })
         .catch(err => {
           res.send(err);
+        });
+    }
+  },
+
+  rooms: {
+    get: function(req, res) {
+      models.rooms.get()
+        .then(rooms => {
+          res.send(rooms);
         })
+        .catch(err => {
+          res.send(err);
+        });
+    },
+    post: function(req, res) {
+      models.rooms.post(req.body.roomname)
+        .then(results => {
+          res.send(results);
+        })
+        .catch(err => {
+          res.send(err);
+        });      
     }
   }
 };

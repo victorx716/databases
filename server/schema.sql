@@ -7,8 +7,7 @@ USE chat;
 CREATE TABLE Users (
   /* Describe your table here.*/
   id INT(4) AUTO_INCREMENT PRIMARY KEY,
-  username VARCHAR(30) NOT NULL,
-  ADD CONSTRAINT unique_username UNIQUE KEY (username)
+  username VARCHAR(30) NOT NULL
 );
 
 /* Create other tables and define schemas for them here! */

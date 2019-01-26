@@ -4,6 +4,7 @@
 var mysql = require('mysql');
 var request = require('request'); // You might need to npm install the request module!
 var expect = require('chai').expect;
+var moment = require('moment');
 
 describe('Persistent Node Chat Server', function() {
   var dbConnection;
@@ -49,15 +50,15 @@ describe('Persistent Node Chat Server', function() {
 
         // xTODO: You might have to change this test to get all the data from
         // your message table, since this is schema-dependent.
-        var queryString = 'SELECT * FROM Messages WHERE username = ?';
-        var queryArgs = ['Valjean'];
+        var queryString = 'SELECT * FROM Messages WHERE u_id = ?';
+        var queryArgs = [1];
 
         dbConnection.query(queryString, queryArgs, function(err, results) {
           // Should have one result:
           expect(results.length).to.equal(1);
 
           // xTODO: If you don't have a column named text, change this test.
-          expect(results[0].text).to.equal('In mercy\'s name, three days is all I need.');
+          expect(results[0].text.toString()).to.equal('In mercy\'s name, three days is all I need.');
 
           done();
         });
@@ -67,8 +68,8 @@ describe('Persistent Node Chat Server', function() {
 
   it('Should output all messages from the DB', function(done) {
     // Let's insert a message into the db
-       var queryString = 'SELECT * FROM Messages';
-       var queryArgs = [];
+       var queryString = 'INSERT INTO Messages (u_id, r_id, text, created_at) VALUES (?, ?, ?, ?)';
+       var queryArgs = [1, 1, 'Men like you can never change!', moment().format('YYYY-MM-DD HH:MM:SS')];
     // TODO - The exact query string and query args to use
     // here depend on the schema you design, so I'll leave
     // them up to you. */
@@ -81,7 +82,7 @@ describe('Persistent Node Chat Server', function() {
       request('http://127.0.0.1:3000/classes/messages', function(error, response, body) {
         var messageLog = JSON.parse(body);
         expect(messageLog[0].text).to.equal('Men like you can never change!');
-        expect(messageLog[0].roomname).to.equal('main');
+        expect(messageLog[0].roomname).to.equal('Hello');
         done();
       });
     });
